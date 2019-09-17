@@ -7,9 +7,16 @@ import (
 )
 
 const (
+	// LevelDebug log all messages.
 	LevelDebug = iota
+
+	// LevelInfo log info, warning and error messages.
 	LevelInfo
+
+	// LevelWarning log warning and error messages.
 	LevelWarning
+
+	// LevelError log error messages only.
 	LevelError
 )
 

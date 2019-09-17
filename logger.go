@@ -31,6 +31,8 @@ func NewLogger(level int, out io.Writer) *Logger {
 }
 
 func (log *Logger) SetLevel(level int) {
+	log.m.Lock()
+	defer log.m.Unlock()
 	log.level = getValidLevel(level)
 }
 
@@ -39,6 +41,8 @@ func (log *Logger) GetLevel() int {
 }
 
 func (log *Logger) SetFormatter(formatter Formatter) {
+	log.m.Lock()
+	defer log.m.Unlock()
 	log.formatter = formatter
 }
 
@@ -47,10 +51,12 @@ func (log *Logger) GetFormatter() Formatter {
 }
 
 func (log *Logger) SetOut(out io.Writer) {
+	log.m.Lock()
+	defer log.m.Unlock()
 	log.out = out
 }
 
-func (log *Logger) GetLogger() io.Writer {
+func (log *Logger) GetOut() io.Writer {
 	return log.out
 }
 

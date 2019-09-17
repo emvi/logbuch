@@ -35,4 +35,18 @@ func (formatter *StandardFormatter) Fmt(buffer *[]byte, level int, t time.Time, 
 
 	*buffer = append(*buffer, t.Format(formatter.timeFormat)+" "...)
 	*buffer = append(*buffer, fmt.Sprintf(msg, params...)...)
+
+	if len(*buffer) == 0 || (*buffer)[len(*buffer)-1] != '\n' {
+		*buffer = append(*buffer, '\n')
+	}
+}
+
+type DiscardFormatter struct{}
+
+func NewDiscardFormatter() *DiscardFormatter {
+	return new(DiscardFormatter)
+}
+
+func (formatter *DiscardFormatter) Fmt(buffer *[]byte, level int, t time.Time, msg string, params ...interface{}) {
+	// does nothing
 }

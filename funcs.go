@@ -1,6 +1,7 @@
 package logbuch
 
 import (
+	"io"
 	"os"
 )
 
@@ -12,8 +13,15 @@ var (
 	level         = LevelDebug
 )
 
-func SetLevel(level int) {
-	level = getValidLevel(level)
+func SetOutput(stdout, stderr io.Writer) {
+	DebugLogger.SetOut(stdout)
+	InfoLogger.SetOut(stdout)
+	WarningLogger.SetOut(stdout)
+	ErrorLogger.SetOut(stderr)
+}
+
+func SetLevel(lvl int) {
+	level = getValidLevel(lvl)
 }
 
 func Debug(msg string, params ...interface{}) {
@@ -35,7 +43,6 @@ func Warn(msg string, params ...interface{}) {
 }
 
 func Error(msg string, params ...interface{}) {
-	if level <= LevelError {
-		ErrorLogger.Log(msg, params...)
-	}
+	// maximum level cannot be disabled
+	ErrorLogger.Log(msg, params...)
 }

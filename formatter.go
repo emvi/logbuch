@@ -6,21 +6,28 @@ import (
 )
 
 const (
+	// StandardTimeFormat is a synonym for time.RFC3339Nano.
 	StandardTimeFormat = time.RFC3339Nano
 )
 
+// Formatter is an interface to format log messages.
 type Formatter interface {
+	// Fmt formats a logger message and writes the result into the buffer.
 	Fmt(*[]byte, int, time.Time, string, ...interface{})
 }
 
+// StandardFormatter is the default logger.
+// It prints log messages starting with the log level, followed by the timestamp and the formatted message.
 type StandardFormatter struct {
 	timeFormat string
 }
 
+// NewStandardFormatter creates a new StandardFormatter with given timestamp format.
 func NewStandardFormatter(timeFormat string) *StandardFormatter {
 	return &StandardFormatter{timeFormat: timeFormat}
 }
 
+// Fmt formats the message as described for the StandardFormatter.
 func (formatter *StandardFormatter) Fmt(buffer *[]byte, level int, t time.Time, msg string, params ...interface{}) {
 	switch level {
 	case LevelDebug:
@@ -41,12 +48,15 @@ func (formatter *StandardFormatter) Fmt(buffer *[]byte, level int, t time.Time, 
 	}
 }
 
+// DiscardFormatter drops all messages.
 type DiscardFormatter struct{}
 
+// NewDiscardFormatter creates a new DiscardFormatter.
 func NewDiscardFormatter() *DiscardFormatter {
 	return new(DiscardFormatter)
 }
 
+// Fmt drops the message.
 func (formatter *DiscardFormatter) Fmt(buffer *[]byte, level int, t time.Time, msg string, params ...interface{}) {
 	// does nothing
 }

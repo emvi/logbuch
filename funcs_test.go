@@ -21,11 +21,11 @@ func TestFuncs(t *testing.T) {
 			strings.Contains(stdout.String(), "Info message") != (lvl <= LevelInfo) ||
 			strings.Contains(stdout.String(), "Warning message") != (lvl <= LevelWarning) ||
 			strings.Contains(stdout.String(), "Error message") {
-			t.Fatalf("Unexpected standard log output for level %v: %v", level, stdout.String())
+			t.Fatalf("Unexpected standard log output for level %v: %v", logger.level, stdout.String())
 		}
 
 		if !strings.Contains(stderr.String(), "Error message") {
-			t.Fatalf("Unexpected error log output for level %v: %v", level, stderr.String())
+			t.Fatalf("Unexpected error log output for level %v: %v", logger.level, stderr.String())
 		}
 	}
 }

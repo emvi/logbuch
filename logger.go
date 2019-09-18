@@ -20,7 +20,7 @@ const (
 	LevelError
 )
 
-// Logger writes messages to a defined output io.Writer by using a given Formatter.
+// Logger writes messages to different io.Writers depending on the log level by using a Formatter.
 type Logger struct {
 	m          sync.Mutex
 	level      int
@@ -35,7 +35,7 @@ type Logger struct {
 	PanicOnErr bool
 }
 
-// NewLogger creates a new logger for given log level and io.Writer that uses the StandardFormatter.
+// NewLogger creates a new logger using the StandardFormatter for given io.Writers.
 func NewLogger(stdout, stderr io.Writer) *Logger {
 	return &Logger{formatter: NewStandardFormatter(StandardTimeFormat),
 		debugOut:   stdout,

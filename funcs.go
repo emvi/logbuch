@@ -10,8 +10,8 @@ var (
 )
 
 // SetOutput sets the output channels for the default logger.
-// The first parameter is used for debug, info and warnings.
-// The second one for error logs.
+// The first parameter is used for debug, info and warning levels.
+// The second one for error level.
 func SetOutput(stdout, stderr io.Writer) {
 	logger.SetOut(LevelDebug, stdout)
 	logger.SetOut(LevelInfo, stdout)

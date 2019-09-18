@@ -21,10 +21,10 @@ func TestStandardFormatter(t *testing.T) {
 		{LevelError, "Hello %s %d %v!", []interface{}{"World", 123, -3.14}},
 	}
 	expected := []string{
-		"[DEBUG] " + nowStr + " Hello World!\n",
-		"[INFO ] " + nowStr + " Hello World!\n",
-		"[WARN ] " + nowStr + " Hello World 123!\n",
-		"[ERROR] " + nowStr + " Hello World 123 -3.14!\n",
+		nowStr + " [DEBUG] " + "Hello World!\n",
+		nowStr + " [INFO ] " + "Hello World!\n",
+		nowStr + " [WARN ] " + "Hello World 123!\n",
+		nowStr + " [ERROR] " + "Hello World 123 -3.14!\n",
 	}
 
 	for i, in := range input {

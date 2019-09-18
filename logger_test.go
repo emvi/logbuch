@@ -9,14 +9,14 @@ import (
 func TestLoggerLog(t *testing.T) {
 	var buffer bytes.Buffer
 	expect := "Hello World!\n"
-	logger := NewLogger(LevelDebug, &buffer)
-	logger.Log("Hello %s!", "World")
+	logger := NewLogger(&buffer, &buffer)
+	logger.Debug("Hello %s!", "World")
 
 	if !strings.Contains(buffer.String(), expect) {
 		t.Fatalf("Expected '%v' to contain '%v'", buffer.String(), expect)
 	}
 
-	logger.Log("Another log %s", "entry")
+	logger.Debug("Another log %s", "entry")
 	expect = "Another log entry\n"
 
 	if !strings.Contains(buffer.String(), expect) {
@@ -25,7 +25,7 @@ func TestLoggerLog(t *testing.T) {
 }
 
 func TestLoggerLevel(t *testing.T) {
-	logger := NewLogger(LevelError, nil)
+	logger := NewLogger(nil, nil)
 	logger.SetLevel(LevelDebug)
 
 	if logger.level != LevelDebug || logger.GetLevel() != LevelDebug {
@@ -54,8 +54,8 @@ func TestLoggerLevel(t *testing.T) {
 func TestLoggerFormatterAndOutput(t *testing.T) {
 	var buffer bytes.Buffer
 	expect := "Hello World!\n"
-	logger := NewLogger(LevelDebug, &buffer)
-	logger.Log("Hello %s!", "World")
+	logger := NewLogger(&buffer, &buffer)
+	logger.Debug("Hello %s!", "World")
 
 	if !strings.Contains(buffer.String(), expect) {
 		t.Fatalf("Expected '%v' to contain '%v'", buffer.String(), expect)
@@ -69,8 +69,8 @@ func TestLoggerFormatterAndOutput(t *testing.T) {
 	}
 
 	var newBuffer bytes.Buffer
-	logger.SetOut(&newBuffer)
-	logger.Log("Another log %s", "entry")
+	logger.SetOut(LevelDebug, &newBuffer)
+	logger.Debug("Another log %s", "entry")
 
 	if newBuffer.String() != "" {
 		t.Fatalf("Expected log to be empty but was: %v", buffer.String())

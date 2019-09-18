@@ -17,7 +17,7 @@ type Formatter interface {
 }
 
 // StandardFormatter is the default logger.
-// It prints log messages starting with the log level, followed by the timestamp and the formatted message.
+// It prints log messages starting with the timestamp, followed by the log level and the formatted message.
 type StandardFormatter struct {
 	timeFormat string
 }
@@ -29,6 +29,8 @@ func NewStandardFormatter(timeFormat string) *StandardFormatter {
 
 // Fmt formats the message as described for the StandardFormatter.
 func (formatter *StandardFormatter) Fmt(buffer *[]byte, level int, t time.Time, msg string, params ...interface{}) {
+	*buffer = append(*buffer, t.Format(formatter.timeFormat)+" "...)
+
 	switch level {
 	case LevelDebug:
 		*buffer = append(*buffer, "[DEBUG] "...)
@@ -40,7 +42,6 @@ func (formatter *StandardFormatter) Fmt(buffer *[]byte, level int, t time.Time, 
 		*buffer = append(*buffer, "[ERROR] "...)
 	}
 
-	*buffer = append(*buffer, t.Format(formatter.timeFormat)+" "...)
 	*buffer = append(*buffer, fmt.Sprintf(msg, params...)...)
 
 	if len(*buffer) == 0 || (*buffer)[len(*buffer)-1] != '\n' {

@@ -39,6 +39,9 @@ func main() {
     l.Debug("Just like the default logger...")
     l.SetFormatter(logbuch.NewDiscardFormatter())
     l.Error("This error will be dropped!")
+    
+    // or to panic...
+    l.Fatal("We are going down! Error code: %d", 123)
 }
 ```
 

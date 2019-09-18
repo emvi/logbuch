@@ -6,63 +6,41 @@ import (
 )
 
 var (
-	// DebugLogger is used for debug logs.
-	// Logs to os.Stdout by default.
-	DebugLogger = NewLogger(LevelDebug, os.Stdout)
-
-	// InfoLogger is used for info logs.
-	// Logs to os.Stdout by default.
-	InfoLogger = NewLogger(LevelInfo, os.Stdout)
-
-	// WarningLogger is used for warning logs.
-	// Logs to os.Stdout by default.
-	WarningLogger = NewLogger(LevelWarning, os.Stdout)
-
-	// ErrorLogger is used for error logs.
-	// Logs to os.Stderr by default.
-	ErrorLogger = NewLogger(LevelError, os.Stderr)
-
-	level = LevelDebug
+	logger = NewLogger(os.Stdout, os.Stderr)
 )
 
-// SetOutput sets the output channels for the default loggers.
+// SetOutput sets the output channels for the default logger.
 // The first parameter is used for debug, info and warnings.
 // The second one for error logs.
 func SetOutput(stdout, stderr io.Writer) {
-	DebugLogger.SetOut(stdout)
-	InfoLogger.SetOut(stdout)
-	WarningLogger.SetOut(stdout)
-	ErrorLogger.SetOut(stderr)
+	logger.SetOut(LevelDebug, stdout)
+	logger.SetOut(LevelInfo, stdout)
+	logger.SetOut(LevelWarning, stdout)
+	logger.SetOut(LevelError, stderr)
 }
 
 // SetLevel sets the logging level.
-func SetLevel(lvl int) {
-	level = getValidLevel(lvl)
+func SetLevel(level int) {
+	logger.SetLevel(level)
 }
 
 // Debug logs a formatted debug message.
 func Debug(msg string, params ...interface{}) {
-	if level <= LevelDebug {
-		DebugLogger.Log(msg, params...)
-	}
+	logger.Debug(msg, params...)
 }
 
 // Info logs a formatted info message.
 func Info(msg string, params ...interface{}) {
-	if level <= LevelInfo {
-		InfoLogger.Log(msg, params...)
-	}
+	logger.Info(msg, params...)
 }
 
 // Warn logs a formatted warning message.
 func Warn(msg string, params ...interface{}) {
-	if level <= LevelWarning {
-		WarningLogger.Log(msg, params...)
-	}
+	logger.Warn(msg, params...)
 }
 
 // Error logs a formatted error message.
 func Error(msg string, params ...interface{}) {
 	// maximum level cannot be disabled
-	ErrorLogger.Log(msg, params...)
+	logger.Error(msg, params...)
 }

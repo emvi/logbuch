@@ -44,3 +44,8 @@ func Error(msg string, params ...interface{}) {
 	// maximum level cannot be disabled
 	logger.Error(msg, params...)
 }
+
+// Fatal logs a formatted error message and panics.
+func Fatal(msg string, params ...interface{}) {
+	logger.Fatal(msg, params...)
+}

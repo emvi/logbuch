@@ -29,3 +29,20 @@ func TestFuncs(t *testing.T) {
 		}
 	}
 }
+
+func TestFatal(t *testing.T) {
+	var stderr bytes.Buffer
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatalf("Fatal must panic")
+		}
+
+		if !strings.Contains(stderr.String(), "Fatal message") {
+			t.Fatalf("Log must contain error message")
+		}
+	}()
+
+	SetOutput(nil, &stderr)
+	Fatal("Fatal %v", "message")
+}

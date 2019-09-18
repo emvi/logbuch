@@ -42,7 +42,11 @@ func (formatter *StandardFormatter) Fmt(buffer *[]byte, level int, t time.Time, 
 		*buffer = append(*buffer, "[ERROR] "...)
 	}
 
-	*buffer = append(*buffer, fmt.Sprintf(msg, params...)...)
+	if len(params) == 0 {
+		*buffer = append(*buffer, msg...)
+	} else {
+		*buffer = append(*buffer, fmt.Sprintf(msg, params...)...)
+	}
 
 	if len(*buffer) == 0 || (*buffer)[len(*buffer)-1] != '\n' {
 		*buffer = append(*buffer, '\n')

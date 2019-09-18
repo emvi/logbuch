@@ -1,6 +1,7 @@
 package logbuch
 
 import (
+	"fmt"
 	"io"
 	"sync"
 	"time"
@@ -124,6 +125,17 @@ func (log *Logger) Warn(msg string, params ...interface{}) {
 func (log *Logger) Error(msg string, params ...interface{}) {
 	// maximum level cannot be disabled
 	log.log(LevelError, msg, params...)
+}
+
+// Fatal logs a formatted error message and panics.
+func (log *Logger) Fatal(msg string, params ...interface{}) {
+	log.Error(msg, params...)
+
+	if len(params) == 0 {
+		panic(msg)
+	}
+
+	panic(fmt.Sprintf(msg, params...))
 }
 
 func (log *Logger) log(level int, msg string, params ...interface{}) {

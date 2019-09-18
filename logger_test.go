@@ -76,3 +76,20 @@ func TestLoggerFormatterAndOutput(t *testing.T) {
 		t.Fatalf("Expected log to be empty but was: %v", buffer.String())
 	}
 }
+
+func TestLoggerFatal(t *testing.T) {
+	var stderr bytes.Buffer
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatalf("Fatal must panic")
+		}
+
+		if !strings.Contains(stderr.String(), "Fatal message") {
+			t.Fatalf("Log must contain error message")
+		}
+	}()
+
+	logger := NewLogger(nil, &stderr)
+	logger.Fatal("Fatal %v", "message")
+}

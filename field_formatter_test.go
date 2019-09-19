@@ -32,6 +32,7 @@ func TestFieldFormatter(t *testing.T) {
 		buffer = buffer[:0]
 		formatter.Fmt(&buffer, in.level, now, in.msg, in.params...)
 		out := string(buffer)
+		t.Log(out)
 
 		for _, exp := range expected[i] {
 			if !strings.Contains(out, exp) {

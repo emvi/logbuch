@@ -30,9 +30,11 @@ func TestStandardFormatter(t *testing.T) {
 	for i, in := range input {
 		buffer = buffer[:0]
 		formatter.Fmt(&buffer, in.level, now, in.msg, in.params...)
+		out := string(buffer)
+		t.Log(out)
 
-		if string(buffer) != expected[i] {
-			t.Fatalf("Expected '%v' but was: %v", expected[i], string(buffer))
+		if out != expected[i] {
+			t.Fatalf("Expected '%v' but was: %v", expected[i], out)
 		}
 	}
 }

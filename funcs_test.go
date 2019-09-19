@@ -46,3 +46,12 @@ func TestFatal(t *testing.T) {
 	SetOutput(nil, &stderr)
 	Fatal("Fatal %v", "message")
 }
+
+func TestSetFormatter(t *testing.T) {
+	formatter := NewFieldFormatter(StandardTimeFormat, "\t")
+	SetFormatter(formatter)
+
+	if logger.GetFormatter() != formatter {
+		t.Fatal("Formatter must have been set")
+	}
+}

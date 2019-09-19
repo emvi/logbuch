@@ -24,6 +24,11 @@ func SetLevel(level int) {
 	logger.SetLevel(level)
 }
 
+// SetFormatter sets the formatter of the default logger.
+func SetFormatter(formatter Formatter) {
+	logger.SetFormatter(formatter)
+}
+
 // Debug logs a formatted debug message.
 func Debug(msg string, params ...interface{}) {
 	logger.Debug(msg, params...)

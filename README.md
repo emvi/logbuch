@@ -31,6 +31,7 @@ func main() {
     logbuch.Warn("Warning")
     logbuch.Error("Error")
 
+    // logging cannot be disabled for errors except you use the DiscardFormatter
     logbuch.SetLevel(logbuch.LevelInfo)
     logbuch.Debug("Don't log this anymore!")
 
@@ -44,6 +45,41 @@ func main() {
     l.Fatal("We are going down! Error code: %d", 123)
 }
 ```
+
+## Formatters
+
+To use formatters you can either implement your own or use one provided by logbuch. There are three kind of formatters provided right now:
+
+### StandardFormatter
+
+This is the default. The log output looks like this:
+
+```
+2019-09-19T17:39:02.4326139+02:00 [DEBUG] This is a debug message.
+2019-09-19T17:39:02.4326139+02:00 [INFO ] Hello World!
+2019-09-19T17:39:02.4326139+02:00 [WARN ] Some formatted message 123.
+2019-09-19T17:39:02.4326139+02:00 [ERROR] An error occurred: 123
+```
+
+## FieldFormatter
+
+The FieldFormatter prints the log parameters in a structured way. To have a nice logging output, use the `logbuch.Fields` type together with this:
+
+```
+formatter := logbuch.NewFieldFormatter(logbuch.StandardTimeFormat, "\t\t\t")
+logbuch.SetFormatter(formatter)
+logbuch.Debug("Debug message", logbuch.Fields{"some": "value", "code": 123})
+```
+
+The log output looks like this:
+
+```
+2019-09-19T17:45:26.6635897+02:00 [DEBUG] Debug message				 some=value code=123
+```
+
+### DiscardFormatter
+
+The DiscardFormatter simply drops all log messages (including errors) and can be used to do just that.
 
 ## Contribute
 

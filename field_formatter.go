@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Fields is used together with the FieldFormatter.
 type Fields map[string]interface{}
 
 // FieldFormatter adds fields to the output as key value pairs. The message won't be formatted.

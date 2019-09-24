@@ -41,3 +41,52 @@ func TestFieldFormatter(t *testing.T) {
 		}
 	}
 }
+
+func TestFieldFormatterPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("Formatter must panic")
+		} else {
+			if r != "message" {
+				t.Fatalf("Message not correct: %v", r)
+			}
+		}
+	}()
+
+	formatter := NewFieldFormatter(StandardTimeFormat, "\t\t\t")
+	formatter.Pnc("message")
+}
+
+func TestFieldFormatterPanicFmt(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("Formatter must panic")
+		} else {
+			if r != "message formatted" {
+				t.Fatalf("Message must be formatted, but was: %v", r)
+			}
+		}
+	}()
+
+	formatter := NewFieldFormatter(StandardTimeFormat, "\t\t\t")
+	formatter.Pnc("message %s", "formatted")
+}
+
+func TestFieldFormatterPanicFmtFields(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("Formatter must panic")
+		} else {
+			rStr, _ := r.(string)
+
+			if !strings.Contains(rStr, "message") ||
+				!strings.Contains(rStr, "variable=value") ||
+				!strings.Contains(rStr, "more=123") {
+				t.Fatalf("Message must be formatted, but was: %v", r)
+			}
+		}
+	}()
+
+	formatter := NewFieldFormatter(StandardTimeFormat, "\t\t\t")
+	formatter.Pnc("message", Fields{"variable": "value", "more": 123})
+}

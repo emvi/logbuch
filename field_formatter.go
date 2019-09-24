@@ -2,6 +2,7 @@ package logbuch
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -63,4 +64,32 @@ func (formatter *FieldFormatter) Fmt(buffer *[]byte, level int, t time.Time, msg
 	}
 
 	*buffer = append(*buffer, '\n')
+}
+
+// Pnc formats the given message and panics.
+func (formatter *FieldFormatter) Pnc(msg string, params ...interface{}) {
+	if len(params) > 0 {
+		fields, ok := params[0].(Fields)
+
+		if len(params) == 1 && ok {
+			var builder strings.Builder
+			builder.WriteString(msg)
+
+			for k, v := range fields {
+				builder.WriteString(fmt.Sprintf(" %s=%v", k, v))
+			}
+
+			panic(builder.String())
+		} else {
+			// it's not possible to format the message right here due to a bug in go vet...
+			// so we pass it on to another function which takes an array as its argument
+			formatter.panicWithFmt(msg, params)
+		}
+	} else {
+		panic(msg)
+	}
+}
+
+func (formatter *FieldFormatter) panicWithFmt(msg string, params []interface{}) {
+	panic(fmt.Sprintf(msg, params...))
 }

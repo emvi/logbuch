@@ -1,7 +1,6 @@
 package logbuch
 
 import (
-	"fmt"
 	"io"
 	"sync"
 	"time"
@@ -130,12 +129,7 @@ func (log *Logger) Error(msg string, params ...interface{}) {
 // Fatal logs a formatted error message and panics.
 func (log *Logger) Fatal(msg string, params ...interface{}) {
 	log.Error(msg, params...)
-
-	if len(params) == 0 {
-		panic(msg)
-	} else {
-		panic(fmt.Sprintf(msg, params...))
-	}
+	log.formatter.Pnc(msg, params...)
 }
 
 func (log *Logger) log(level int, msg string, params ...interface{}) {

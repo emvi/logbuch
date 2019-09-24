@@ -46,3 +46,12 @@ func (formatter *StandardFormatter) Fmt(buffer *[]byte, level int, t time.Time, 
 		*buffer = append(*buffer, '\n')
 	}
 }
+
+// Pnc formats the given message and panics.
+func (formatter *StandardFormatter) Pnc(msg string, params ...interface{}) {
+	if len(params) == 0 {
+		panic(msg)
+	} else {
+		panic(fmt.Sprintf(msg, params...))
+	}
+}

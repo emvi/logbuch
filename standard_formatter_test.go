@@ -38,3 +38,33 @@ func TestStandardFormatter(t *testing.T) {
 		}
 	}
 }
+
+func TestStandardFormatterPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("Formatter must panic")
+		} else {
+			if r != "message" {
+				t.Fatalf("Message not correct: %v", r)
+			}
+		}
+	}()
+
+	formatter := NewStandardFormatter(StandardTimeFormat)
+	formatter.Pnc("message")
+}
+
+func TestStandardFormatterPanicFmt(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("Formatter must panic")
+		} else {
+			if r != "message formatted" {
+				t.Fatalf("Message must be formatted, but was: %v", r)
+			}
+		}
+	}()
+
+	formatter := NewStandardFormatter(StandardTimeFormat)
+	formatter.Pnc("message %s", "formatted")
+}

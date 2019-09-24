@@ -68,3 +68,13 @@ func TestStandardFormatterPanicFmt(t *testing.T) {
 	formatter := NewStandardFormatter(StandardTimeFormat)
 	formatter.Pnc("message %s", []interface{}{"formatted"})
 }
+
+func TestStandardFormatterDiableTime(t *testing.T) {
+	formatter := NewStandardFormatter("")
+	var buffer []byte
+	formatter.Fmt(&buffer, LevelDebug, time.Now(), "message", nil)
+
+	if string(buffer) != "[DEBUG] message\n" {
+		t.Fatalf("Unexpected log: %v", string(buffer))
+	}
+}

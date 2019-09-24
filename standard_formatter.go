@@ -13,17 +13,21 @@ const (
 // StandardFormatter is the default formatter.
 // It prints log messages starting with the timestamp, followed by the log level and the formatted message.
 type StandardFormatter struct {
-	timeFormat string
+	timeFormat  string
+	disableTime bool
 }
 
 // NewStandardFormatter creates a new StandardFormatter with given timestamp format.
+// The timestamp can be disabled by passing an empty string.
 func NewStandardFormatter(timeFormat string) *StandardFormatter {
-	return &StandardFormatter{timeFormat: timeFormat}
+	return &StandardFormatter{timeFormat: timeFormat, disableTime: timeFormat == ""}
 }
 
 // Fmt formats the message as described for the StandardFormatter.
 func (formatter *StandardFormatter) Fmt(buffer *[]byte, level int, t time.Time, msg string, params []interface{}) {
-	*buffer = append(*buffer, t.Format(formatter.timeFormat)+" "...)
+	if !formatter.disableTime {
+		*buffer = append(*buffer, t.Format(formatter.timeFormat)+" "...)
+	}
 
 	switch level {
 	case LevelDebug:

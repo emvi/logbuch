@@ -19,18 +19,22 @@ type Fields map[string]interface{}
 // If there is more than one parameter or the type of the parameter is different,
 // all parameters will be appended after the message.
 type FieldFormatter struct {
-	timeFormat string
-	separator  string
+	timeFormat  string
+	disableTime bool
+	separator   string
 }
 
 // NewFieldFormatter creates a new FieldFormatter with given timestamp format and separator between message and key value pairs.
+// The timestamp can be disabled by passing an empty string.
 func NewFieldFormatter(timeFormat, separator string) *FieldFormatter {
-	return &FieldFormatter{timeFormat: timeFormat, separator: separator}
+	return &FieldFormatter{timeFormat: timeFormat, disableTime: timeFormat == "", separator: separator}
 }
 
 // Fmt formats the message as described for the FieldFormatter.
 func (formatter *FieldFormatter) Fmt(buffer *[]byte, level int, t time.Time, msg string, params []interface{}) {
-	*buffer = append(*buffer, t.Format(formatter.timeFormat)+" "...)
+	if !formatter.disableTime {
+		*buffer = append(*buffer, t.Format(formatter.timeFormat)+" "...)
+	}
 
 	switch level {
 	case LevelDebug:

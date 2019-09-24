@@ -90,3 +90,13 @@ func TestFieldFormatterPanicFmtFields(t *testing.T) {
 	formatter := NewFieldFormatter(StandardTimeFormat, "\t\t\t")
 	formatter.Pnc("message", []interface{}{Fields{"variable": "value", "more": 123}})
 }
+
+func TestFieldFormatterDiableTime(t *testing.T) {
+	formatter := NewFieldFormatter("", "\t\t\t")
+	var buffer []byte
+	formatter.Fmt(&buffer, LevelDebug, time.Now(), "message", nil)
+
+	if string(buffer) != "[DEBUG] message\n" {
+		t.Fatalf("Unexpected log: %v", string(buffer))
+	}
+}

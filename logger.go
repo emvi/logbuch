@@ -133,9 +133,9 @@ func (log *Logger) Fatal(msg string, params ...interface{}) {
 
 	if len(params) == 0 {
 		panic(msg)
+	} else {
+		panic(fmt.Sprintf(msg, params...))
 	}
-
-	panic(fmt.Sprintf(msg, params...))
 }
 
 func (log *Logger) log(level int, msg string, params ...interface{}) {

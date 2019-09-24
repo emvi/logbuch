@@ -30,7 +30,7 @@ func TestFieldFormatter(t *testing.T) {
 
 	for i, in := range input {
 		buffer = buffer[:0]
-		formatter.Fmt(&buffer, in.level, now, in.msg, in.params...)
+		formatter.Fmt(&buffer, in.level, now, in.msg, in.params)
 		out := string(buffer)
 		t.Log(out)
 
@@ -54,7 +54,7 @@ func TestFieldFormatterPanic(t *testing.T) {
 	}()
 
 	formatter := NewFieldFormatter(StandardTimeFormat, "\t\t\t")
-	formatter.Pnc("message")
+	formatter.Pnc("message", nil)
 }
 
 func TestFieldFormatterPanicFmt(t *testing.T) {
@@ -69,7 +69,7 @@ func TestFieldFormatterPanicFmt(t *testing.T) {
 	}()
 
 	formatter := NewFieldFormatter(StandardTimeFormat, "\t\t\t")
-	formatter.Pnc("message %s", "formatted")
+	formatter.Pnc("message %s", []interface{}{"formatted"})
 }
 
 func TestFieldFormatterPanicFmtFields(t *testing.T) {
@@ -88,5 +88,5 @@ func TestFieldFormatterPanicFmtFields(t *testing.T) {
 	}()
 
 	formatter := NewFieldFormatter(StandardTimeFormat, "\t\t\t")
-	formatter.Pnc("message", Fields{"variable": "value", "more": 123})
+	formatter.Pnc("message", []interface{}{Fields{"variable": "value", "more": 123}})
 }

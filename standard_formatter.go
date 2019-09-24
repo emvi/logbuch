@@ -22,7 +22,7 @@ func NewStandardFormatter(timeFormat string) *StandardFormatter {
 }
 
 // Fmt formats the message as described for the StandardFormatter.
-func (formatter *StandardFormatter) Fmt(buffer *[]byte, level int, t time.Time, msg string, params ...interface{}) {
+func (formatter *StandardFormatter) Fmt(buffer *[]byte, level int, t time.Time, msg string, params []interface{}) {
 	*buffer = append(*buffer, t.Format(formatter.timeFormat)+" "...)
 
 	switch level {
@@ -48,7 +48,7 @@ func (formatter *StandardFormatter) Fmt(buffer *[]byte, level int, t time.Time, 
 }
 
 // Pnc formats the given message and panics.
-func (formatter *StandardFormatter) Pnc(msg string, params ...interface{}) {
+func (formatter *StandardFormatter) Pnc(msg string, params []interface{}) {
 	if len(params) == 0 {
 		panic(msg)
 	} else {

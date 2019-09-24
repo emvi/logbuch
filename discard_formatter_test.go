@@ -9,7 +9,7 @@ func TestDiscardFormatter(t *testing.T) {
 	formatter := NewDiscardFormatter()
 	now := time.Now()
 	var buffer []byte
-	formatter.Fmt(&buffer, LevelDebug, now, "Message", "param", 123)
+	formatter.Fmt(&buffer, LevelDebug, now, "Message", []interface{}{"param", 123})
 
 	if string(buffer) != "" {
 		t.Fatalf("Log must be discarded but was: %v", string(buffer))
@@ -28,7 +28,7 @@ func TestDiscardFormatterPanic(t *testing.T) {
 	}()
 
 	formatter := NewDiscardFormatter()
-	formatter.Pnc("message")
+	formatter.Pnc("message", nil)
 }
 
 func TestDiscardFormatterPanicFmt(t *testing.T) {
@@ -43,5 +43,5 @@ func TestDiscardFormatterPanicFmt(t *testing.T) {
 	}()
 
 	formatter := NewDiscardFormatter()
-	formatter.Pnc("message %s", "formatted")
+	formatter.Pnc("message %s", []interface{}{"formatted"})
 }

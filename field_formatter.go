@@ -29,7 +29,7 @@ func NewFieldFormatter(timeFormat, separator string) *FieldFormatter {
 }
 
 // Fmt formats the message as described for the FieldFormatter.
-func (formatter *FieldFormatter) Fmt(buffer *[]byte, level int, t time.Time, msg string, params ...interface{}) {
+func (formatter *FieldFormatter) Fmt(buffer *[]byte, level int, t time.Time, msg string, params []interface{}) {
 	*buffer = append(*buffer, t.Format(formatter.timeFormat)+" "...)
 
 	switch level {
@@ -67,7 +67,7 @@ func (formatter *FieldFormatter) Fmt(buffer *[]byte, level int, t time.Time, msg
 }
 
 // Pnc formats the given message and panics.
-func (formatter *FieldFormatter) Pnc(msg string, params ...interface{}) {
+func (formatter *FieldFormatter) Pnc(msg string, params []interface{}) {
 	if len(params) > 0 {
 		fields, ok := params[0].(Fields)
 

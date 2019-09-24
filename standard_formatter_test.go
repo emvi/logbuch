@@ -29,7 +29,7 @@ func TestStandardFormatter(t *testing.T) {
 
 	for i, in := range input {
 		buffer = buffer[:0]
-		formatter.Fmt(&buffer, in.level, now, in.msg, in.params...)
+		formatter.Fmt(&buffer, in.level, now, in.msg, in.params)
 		out := string(buffer)
 		t.Log(out)
 
@@ -51,7 +51,7 @@ func TestStandardFormatterPanic(t *testing.T) {
 	}()
 
 	formatter := NewStandardFormatter(StandardTimeFormat)
-	formatter.Pnc("message")
+	formatter.Pnc("message", nil)
 }
 
 func TestStandardFormatterPanicFmt(t *testing.T) {
@@ -66,5 +66,5 @@ func TestStandardFormatterPanicFmt(t *testing.T) {
 	}()
 
 	formatter := NewStandardFormatter(StandardTimeFormat)
-	formatter.Pnc("message %s", "formatted")
+	formatter.Pnc("message %s", []interface{}{"formatted"})
 }

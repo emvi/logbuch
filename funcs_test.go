@@ -38,13 +38,15 @@ func TestFatal(t *testing.T) {
 			t.Fatalf("Fatal must panic")
 		}
 
-		if !strings.Contains(stderr.String(), "Fatal message") {
+		if !strings.Contains(stderr.String(), "Fatal") ||
+			!strings.Contains(stderr.String(), "key=value") {
 			t.Fatalf("Log must contain error message")
 		}
 	}()
 
 	SetOutput(nil, &stderr)
-	Fatal("Fatal %v", "message")
+	SetFormatter(NewFieldFormatter(StandardTimeFormat, "\t"))
+	Fatal("Fatal", Fields{"key": "value"})
 }
 
 func TestSetFormatter(t *testing.T) {

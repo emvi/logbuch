@@ -102,42 +102,42 @@ func (log *Logger) GetOut(level int) io.Writer {
 // Debug logs a formatted debug message.
 func (log *Logger) Debug(msg string, params ...interface{}) {
 	if log.level <= LevelDebug {
-		log.log(LevelDebug, msg, params...)
+		log.log(LevelDebug, msg, params)
 	}
 }
 
 // Info logs a formatted info message.
 func (log *Logger) Info(msg string, params ...interface{}) {
 	if log.level <= LevelInfo {
-		log.log(LevelInfo, msg, params...)
+		log.log(LevelInfo, msg, params)
 	}
 }
 
 // Warn logs a formatted warning message.
 func (log *Logger) Warn(msg string, params ...interface{}) {
 	if log.level <= LevelWarning {
-		log.log(LevelWarning, msg, params...)
+		log.log(LevelWarning, msg, params)
 	}
 }
 
 // Error logs a formatted error message.
 func (log *Logger) Error(msg string, params ...interface{}) {
 	// maximum level cannot be disabled
-	log.log(LevelError, msg, params...)
+	log.log(LevelError, msg, params)
 }
 
 // Fatal logs a formatted error message and panics.
 func (log *Logger) Fatal(msg string, params ...interface{}) {
 	log.Error(msg, params...)
-	log.formatter.Pnc(msg, params...)
+	log.formatter.Pnc(msg, params)
 }
 
-func (log *Logger) log(level int, msg string, params ...interface{}) {
+func (log *Logger) log(level int, msg string, params []interface{}) {
 	now := time.Now()
 	log.m.Lock()
 	defer log.m.Unlock()
 	log.buffer = log.buffer[:0]
-	log.formatter.Fmt(&log.buffer, level, now, msg, params...)
+	log.formatter.Fmt(&log.buffer, level, now, msg, params)
 	var err error
 
 	switch level {

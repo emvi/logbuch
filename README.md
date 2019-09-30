@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="logbuchgopher.png" width="300px" />
+</p>
+
 # Logbuch
 
 [![GoDoc](https://godoc.org/github.com/emvi/logbuch?status.svg)](https://godoc.org/github.com/emvi/logbuch)

@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="logbuchgopher.png" width="300px" />
+    <img src="logbuchgopher.svg" width="300px" />
 </p>
 
 # Logbuch

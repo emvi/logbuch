@@ -65,7 +65,7 @@ This is the default. The log output looks like this:
 2019-09-19T17:39:02.4326139+02:00 [ERROR] An error occurred: 123
 ```
 
-## FieldFormatter
+### FieldFormatter
 
 The FieldFormatter prints the log parameters in a structured way. To have a nice logging output, use the `logbuch.Fields` type together with this:
 

@@ -23,6 +23,7 @@ type RollingFileAppender struct {
 	FileDir  string
 
 	buffer          []byte
+	bufferSize      int
 	currentFile     *os.File
 	currentFileSize int
 	fileNames       []string
@@ -46,7 +47,7 @@ func NewRollingFileAppender(files, size, bufferSize int, dir string, filename Na
 		FileSize:  size,
 		FileName:  filename,
 		FileDir:   dir,
-		buffer:    make([]byte, bufferSize),
+		buffer:    make([]byte, 0, bufferSize),
 		fileNames: make([]string, 0, files)}
 
 	if err := appender.nextFile(); err != nil {
@@ -60,13 +61,14 @@ func (appender *RollingFileAppender) Write(p []byte) (n int, err error) {
 	appender.m.Lock()
 	defer appender.m.Unlock()
 
-	if len(p)+len(appender.buffer) >= len(appender.buffer) {
+	if appender.bufferSize+len(p) >= cap(appender.buffer) {
 		if err := appender.flush(); err != nil {
 			return 0, err
 		}
 	}
 
 	appender.buffer = append(appender.buffer, p...)
+	appender.bufferSize += len(p)
 	return len(p), nil
 }
 
@@ -77,7 +79,16 @@ func (appender *RollingFileAppender) Flush() error {
 }
 
 func (appender *RollingFileAppender) Close() error {
+	appender.m.Lock()
+	defer appender.m.Unlock()
+
 	if appender.currentFile != nil {
+		_, err := appender.currentFile.Write(appender.buffer)
+
+		if err != nil {
+			return err
+		}
+
 		return appender.currentFile.Close()
 	}
 
@@ -85,7 +96,7 @@ func (appender *RollingFileAppender) Close() error {
 }
 
 func (appender *RollingFileAppender) flush() error {
-	n, err := appender.currentFile.Write(appender.buffer)
+	n, err := appender.currentFile.Write(appender.buffer[:appender.bufferSize])
 
 	if err != nil {
 		return err
@@ -100,6 +111,7 @@ func (appender *RollingFileAppender) flush() error {
 	}
 
 	appender.buffer = appender.buffer[:0]
+	appender.bufferSize = 0
 	return nil
 }
 
@@ -118,6 +130,7 @@ func (appender *RollingFileAppender) nextFile() error {
 	}
 
 	appender.currentFile = f
+	appender.currentFileSize = 0
 	return appender.updateFiles(path)
 }
 

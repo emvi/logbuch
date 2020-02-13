@@ -85,6 +85,50 @@ The log output looks like this:
 
 The DiscardFormatter simply drops all log messages (including errors) and can be used to do just that.
 
+## Persistent logs
+
+If you want to persist log data, you can use any io.Writer to do so. logbuch comes with a rolling file appender which can be used to store log output into rolling log files. Here is a quick example of it:
+
+```
+import (
+    "os"
+    "github.com/emvi/logbuch"
+)
+
+// create a naming schema for log files
+type NameSchema struct {
+    Name string
+    Counter int
+}
+
+func (schema *NameSchema) Name() {
+    schema.Counter++
+    return fmt.Sprintf("%d_%s.log", schema.Counter, schema.Name)
+}
+
+func main() {
+    stdNameSchema = &NameSchema{Name: "std"}
+    errNameSchema = &NameSchema{Name: "err"}
+
+    // create rolling file appenders for stdout and stderr
+    // using a maximum of 5 files, 5 MB per file and a buffer of 4 KB
+    stdout, _ := logbuch.NewRollingFileAppender(5, 1024*1024*5, 1024*4, "logs", stdNameSchema)
+    stderr, _ := logbuch.NewRollingFileAppender(5, 1024*1024*5, 1024*4, "logs", errNameSchema)
+
+    // this is important!
+    defer stdout.Close()
+    defer stderr.Close()
+
+    // create your logger
+    l := logbuch.NewLogger(stdout, stderr)
+    l.Info("Log to standard output files...")
+    l.Error("Log to standard error files...")
+}
+```
+
+This example will create a directory called `logs` and writes all standard output to files called `1_std.log` and all error output to files called `1_err.log` for up to 5 files before starting rolling over.
+Note that you must close the rolling file appenders.
+
 ## Contribute
 
 [See CONTRIBUTING.md](CONTRIBUTING.md)

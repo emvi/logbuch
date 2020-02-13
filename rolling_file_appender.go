@@ -1,6 +1,7 @@
 package logbuch
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"sync"
@@ -23,7 +24,7 @@ type RollingFileAppender struct {
 	FileDir  string
 
 	buffer          []byte
-	bufferSize      int
+	maxBufferSize   int
 	currentFile     *os.File
 	currentFileSize int
 	fileNames       []string
@@ -43,12 +44,21 @@ func NewRollingFileAppender(files, size, bufferSize int, dir string, filename Na
 		bufferSize = defaultBufferSize
 	}
 
+	if filename == nil {
+		return nil, errors.New("filename schema must be specified")
+	}
+
+	if err := os.MkdirAll(dir, 0774); err != nil {
+		return nil, err
+	}
+
 	appender := &RollingFileAppender{Files: files,
-		FileSize:  size,
-		FileName:  filename,
-		FileDir:   dir,
-		buffer:    make([]byte, 0, bufferSize),
-		fileNames: make([]string, 0, files)}
+		FileSize:      size,
+		FileName:      filename,
+		FileDir:       dir,
+		buffer:        make([]byte, 0, bufferSize),
+		maxBufferSize: bufferSize,
+		fileNames:     make([]string, 0, files)}
 
 	if err := appender.nextFile(); err != nil {
 		return nil, err
@@ -60,15 +70,14 @@ func NewRollingFileAppender(files, size, bufferSize int, dir string, filename Na
 func (appender *RollingFileAppender) Write(p []byte) (n int, err error) {
 	appender.m.Lock()
 	defer appender.m.Unlock()
+	appender.buffer = append(appender.buffer, p...)
 
-	if appender.bufferSize+len(p) >= cap(appender.buffer) {
+	if len(appender.buffer) >= appender.maxBufferSize {
 		if err := appender.flush(); err != nil {
 			return 0, err
 		}
 	}
 
-	appender.buffer = append(appender.buffer, p...)
-	appender.bufferSize += len(p)
 	return len(p), nil
 }
 
@@ -82,36 +91,41 @@ func (appender *RollingFileAppender) Close() error {
 	appender.m.Lock()
 	defer appender.m.Unlock()
 
-	if appender.currentFile != nil {
-		_, err := appender.currentFile.Write(appender.buffer)
+	if err := appender.flush(); err != nil {
+		return err
+	}
+
+	return appender.currentFile.Close()
+}
+
+func (appender *RollingFileAppender) flush() error {
+	offset := 0
+
+	for offset < len(appender.buffer) {
+		if appender.currentFileSize >= appender.FileSize {
+			if err := appender.nextFile(); err != nil {
+				return err
+			}
+		}
+
+		bytes := len(appender.buffer) - offset
+		maxBytes := appender.FileSize - appender.currentFileSize
+
+		if bytes > maxBytes {
+			bytes = maxBytes
+		}
+
+		n, err := appender.currentFile.Write(appender.buffer[offset : offset+bytes])
 
 		if err != nil {
 			return err
 		}
 
-		return appender.currentFile.Close()
-	}
-
-	return nil
-}
-
-func (appender *RollingFileAppender) flush() error {
-	n, err := appender.currentFile.Write(appender.buffer[:appender.bufferSize])
-
-	if err != nil {
-		return err
-	}
-
-	appender.currentFileSize += n
-
-	if appender.currentFileSize > appender.FileSize {
-		if err := appender.nextFile(); err != nil {
-			return err
-		}
+		appender.currentFileSize += n
+		offset += n
 	}
 
 	appender.buffer = appender.buffer[:0]
-	appender.bufferSize = 0
 	return nil
 }
 

@@ -2,6 +2,8 @@ package logbuch
 
 import (
 	"bytes"
+	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 )
@@ -92,4 +94,54 @@ func TestLoggerFatal(t *testing.T) {
 
 	logger := NewLogger(nil, &stderr)
 	logger.Fatal("Fatal %v", "message")
+}
+
+func TestNewLoggerRollingFileAppender(t *testing.T) {
+	if err := os.RemoveAll("out"); err != nil {
+		t.Fatal(err)
+	}
+
+	stdRFA, err := NewRollingFileAppender(0, 0, 0, "out", &testNameSchema{name: ".std"})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	errRFA, err := NewRollingFileAppender(0, 0, 0, "out", &testNameSchema{name: ".err"})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	logger := NewLogger(stdRFA, errRFA)
+	logger.Info("info")
+	logger.Error("error")
+
+	if err := stdRFA.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := errRFA.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	stdFile, err := ioutil.ReadFile("out/1_log.std.txt")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !strings.Contains(string(stdFile), "info") {
+		t.Fatalf("Info log must contain log output, but was: %v", string(stdFile))
+	}
+
+	errFile, err := ioutil.ReadFile("out/1_log.err.txt")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !strings.Contains(string(errFile), "error") {
+		t.Fatalf("Error log must contain log output, but was: %v", string(errFile))
+	}
 }

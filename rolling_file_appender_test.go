@@ -8,12 +8,13 @@ import (
 )
 
 type testNameSchema struct {
+	name    string
 	counter int
 }
 
 func (schema *testNameSchema) Name() string {
 	schema.counter++
-	return fmt.Sprintf("%d_log.txt", schema.counter)
+	return fmt.Sprintf("%d_log%s.txt", schema.counter, schema.name)
 }
 
 func TestNewRollingFileAppender(t *testing.T) {

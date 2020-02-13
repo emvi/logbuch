@@ -13,15 +13,27 @@ const (
 	defaultBufferSize = 4096            // 4 KB
 )
 
+// NameSchema is an interface to generate log file names.
+// If you implement this interface, make sure the Name() method returns unique file names.
 type NameSchema interface {
+	// Name returns the next file name used to store log data.
 	Name() string
 }
 
+// RollingFileAppender is a manager for rolling log files.
+// It needs to be closed using the Close() method.
 type RollingFileAppender struct {
-	Files    int
+	// Files is the number of files used before rolling over.
+	Files int
+
+	// FileSize is the maximum size of a single log file.
 	FileSize int
+
+	// FileName is the naming schema used to create the next log file.
 	FileName NameSchema
-	FileDir  string
+
+	// FileDir is the output directory for log files.
+	FileDir string
 
 	buffer          []byte
 	maxBufferSize   int
@@ -31,6 +43,10 @@ type RollingFileAppender struct {
 	m               sync.Mutex
 }
 
+// NewRollingFileAppender creates a new RollingFileAppender.
+// If you pass values below or equal to 0 for files, size or bufferSize, default values will be used.
+// The file output directory is created if required and can be left empty to use the current directory.
+// The filename schema is required.
 func NewRollingFileAppender(files, size, bufferSize int, dir string, filename NameSchema) (*RollingFileAppender, error) {
 	if files <= 0 {
 		files = defaultFiles
@@ -67,6 +83,9 @@ func NewRollingFileAppender(files, size, bufferSize int, dir string, filename Na
 	return appender, nil
 }
 
+// Write writes given data to the rolling log files.
+// This might not happen immediately as the RollingFileAppender uses a buffer.
+// If you want the data to be persisted, call Flush().
 func (appender *RollingFileAppender) Write(p []byte) (n int, err error) {
 	appender.m.Lock()
 	defer appender.m.Unlock()
@@ -81,12 +100,14 @@ func (appender *RollingFileAppender) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
+// Flush writes all log data currently in buffer into the currently active log file.
 func (appender *RollingFileAppender) Flush() error {
 	appender.m.Lock()
 	defer appender.m.Unlock()
 	return appender.flush()
 }
 
+// Close flushes the log data and closes all open file handlers.
 func (appender *RollingFileAppender) Close() error {
 	appender.m.Lock()
 	defer appender.m.Unlock()

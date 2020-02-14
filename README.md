@@ -23,6 +23,8 @@ go get github.com/emvi/logbuch
 Here is a quick example on how to use the basic functionality of logbuch:
 
 ```
+package main
+
 import (
     "os"
     "github.com/emvi/logbuch"
@@ -90,25 +92,27 @@ The DiscardFormatter simply drops all log messages (including errors) and can be
 If you want to persist log data, you can use any io.Writer to do so. logbuch comes with a rolling file appender which can be used to store log output into rolling log files. Here is a quick example of it:
 
 ```
+package main
+
 import (
-    "os"
+    "fmt"
     "github.com/emvi/logbuch"
 )
 
 // create a naming schema for log files
 type NameSchema struct {
-    Name string
-    Counter int
+    name string
+    counter int
 }
 
-func (schema *NameSchema) Name() {
-    schema.Counter++
-    return fmt.Sprintf("%d_%s.log", schema.Counter, schema.Name)
+func (schema *NameSchema) Name() string {
+    schema.counter++
+    return fmt.Sprintf("%d_%s.log", schema.counter, schema.name)
 }
 
 func main() {
-    stdNameSchema = &NameSchema{Name: "std"}
-    errNameSchema = &NameSchema{Name: "err"}
+    stdNameSchema := &NameSchema{name: "std"}
+    errNameSchema := &NameSchema{name: "err"}
 
     // create rolling file appenders for stdout and stderr
     // using a maximum of 5 files, 5 MB per file and a buffer of 4 KB

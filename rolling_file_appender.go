@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	defaultFiles      = 10
+	defaultFiles      = 1
 	defaultFileSize   = 1024 * 1024 * 5 // 5 MB
 	defaultBufferSize = 4096            // 4 KB
 )
@@ -23,18 +23,10 @@ type NameSchema interface {
 // RollingFileAppender is a manager for rolling log files.
 // It needs to be closed using the Close() method.
 type RollingFileAppender struct {
-	// Files is the number of files used before rolling over.
-	Files int
-
-	// FileSize is the maximum size of a single log file.
-	FileSize int
-
-	// FileName is the naming schema used to create the next log file.
-	FileName NameSchema
-
-	// FileDir is the output directory for log files.
-	FileDir string
-
+	files           int
+	fileSize        int
+	fileName        NameSchema
+	fileDir         string
 	buffer          []byte
 	maxBufferSize   int
 	currentFile     *os.File
@@ -46,7 +38,9 @@ type RollingFileAppender struct {
 // NewRollingFileAppender creates a new RollingFileAppender.
 // If you pass values below or equal to 0 for files, size or bufferSize, default values will be used.
 // The file output directory is created if required and can be left empty to use the current directory.
-// The filename schema is required.
+// The filename schema is required. Note that the rolling file appender uses the filename schema you provide,
+// so if it returns the same name on each call, it will overwrite the existing log file.
+// The RollingFileAppender won't clean the log directory on startup. Old log files will stay in place.
 func NewRollingFileAppender(files, size, bufferSize int, dir string, filename NameSchema) (*RollingFileAppender, error) {
 	if files <= 0 {
 		files = defaultFiles
@@ -68,10 +62,10 @@ func NewRollingFileAppender(files, size, bufferSize int, dir string, filename Na
 		return nil, err
 	}
 
-	appender := &RollingFileAppender{Files: files,
-		FileSize:      size,
-		FileName:      filename,
-		FileDir:       dir,
+	appender := &RollingFileAppender{files: files,
+		fileSize:      size,
+		fileName:      filename,
+		fileDir:       dir,
 		buffer:        make([]byte, 0, bufferSize),
 		maxBufferSize: bufferSize,
 		fileNames:     make([]string, 0, files)}
@@ -89,7 +83,6 @@ func NewRollingFileAppender(files, size, bufferSize int, dir string, filename Na
 func (appender *RollingFileAppender) Write(p []byte) (n int, err error) {
 	appender.m.Lock()
 	defer appender.m.Unlock()
-	appender.buffer = append(appender.buffer, p...)
 
 	if len(appender.buffer) >= appender.maxBufferSize {
 		if err := appender.flush(); err != nil {
@@ -97,6 +90,7 @@ func (appender *RollingFileAppender) Write(p []byte) (n int, err error) {
 		}
 	}
 
+	appender.buffer = append(appender.buffer, p...)
 	return len(p), nil
 }
 
@@ -123,14 +117,14 @@ func (appender *RollingFileAppender) flush() error {
 	offset := 0
 
 	for offset < len(appender.buffer) {
-		if appender.currentFileSize >= appender.FileSize {
+		if appender.currentFileSize >= appender.fileSize {
 			if err := appender.nextFile(); err != nil {
 				return err
 			}
 		}
 
 		bytes := len(appender.buffer) - offset
-		maxBytes := appender.FileSize - appender.currentFileSize
+		maxBytes := appender.fileSize - appender.currentFileSize
 
 		if bytes > maxBytes {
 			bytes = maxBytes
@@ -157,7 +151,7 @@ func (appender *RollingFileAppender) nextFile() error {
 		}
 	}
 
-	path := filepath.Join(appender.FileDir, appender.FileName.Name())
+	path := filepath.Join(appender.fileDir, appender.fileName.Name())
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0664)
 
 	if err != nil {
@@ -172,8 +166,8 @@ func (appender *RollingFileAppender) nextFile() error {
 func (appender *RollingFileAppender) updateFiles(path string) error {
 	appender.fileNames = append(appender.fileNames, path)
 
-	if len(appender.fileNames) > appender.Files {
-		n := len(appender.fileNames) - appender.Files
+	if len(appender.fileNames) > appender.files {
+		n := len(appender.fileNames) - appender.files
 		filesToDelete := appender.fileNames[:n]
 		appender.fileNames = appender.fileNames[n:]
 

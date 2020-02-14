@@ -34,7 +34,7 @@ func TestNewRollingFileAppender(t *testing.T) {
 		t.Fatalf("Rolling file appender must have been created, but was: %v", err)
 	}
 
-	if rfa.Files != defaultFiles || rfa.FileSize != defaultFileSize || rfa.maxBufferSize != defaultBufferSize {
+	if rfa.files != defaultFiles || rfa.fileSize != defaultFileSize || rfa.maxBufferSize != defaultBufferSize {
 		t.Fatalf("Default values not as expected: %v", rfa)
 	}
 

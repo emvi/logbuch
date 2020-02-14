@@ -58,7 +58,7 @@ func TestRollingFileAppender_Write(t *testing.T) {
 		t.Fatalf("Appender must be created, but was: %v", err)
 	}
 
-	for i := 0; i < 4; i++ {
+	for i := 0; i < 5; i++ {
 		if n, err := rfa.Write([]byte(fmt.Sprintf("%d234\n", i))); err != nil || n != 5 {
 			t.Fatalf("Log output must have been written, but was: %v %v", err, n)
 		}

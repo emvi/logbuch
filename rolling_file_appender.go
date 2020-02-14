@@ -114,33 +114,21 @@ func (appender *RollingFileAppender) Close() error {
 }
 
 func (appender *RollingFileAppender) flush() error {
-	offset := 0
+	n, err := appender.currentFile.Write(appender.buffer)
 
-	for offset < len(appender.buffer) {
-		if appender.currentFileSize >= appender.fileSize {
-			if err := appender.nextFile(); err != nil {
-				return err
-			}
-		}
-
-		bytes := len(appender.buffer) - offset
-		maxBytes := appender.fileSize - appender.currentFileSize
-
-		if bytes > maxBytes {
-			bytes = maxBytes
-		}
-
-		n, err := appender.currentFile.Write(appender.buffer[offset : offset+bytes])
-
-		if err != nil {
-			return err
-		}
-
-		appender.currentFileSize += n
-		offset += n
+	if err != nil {
+		return err
 	}
 
 	appender.buffer = appender.buffer[:0]
+	appender.currentFileSize += n
+
+	if appender.currentFileSize >= appender.fileSize {
+		if err := appender.nextFile(); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

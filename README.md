@@ -7,7 +7,7 @@
 [![GoDoc](https://godoc.org/github.com/emvi/logbuch?status.svg)](https://godoc.org/github.com/emvi/logbuch)
 [![CircleCI](https://circleci.com/gh/emvi/logbuch.svg?style=svg)](https://circleci.com/gh/emvi/logbuch)
 [![Go Report Card](https://goreportcard.com/badge/github.com/emvi/logbuch)](https://goreportcard.com/report/github.com/emvi/logbuch)
-<a href="https://discord.gg/5UWdRh"><img src="https://img.shields.io/discord/739184135649886288?logo=discord" alt="Chat on Discord"></a>
+<a href="https://discord.gg/fAYm4Cz"><img src="https://img.shields.io/discord/739184135649886288?logo=discord" alt="Chat on Discord"></a>
 
 Simple Go logging library with support for different output channels (io.Writer) for each log level. A formatter can be provided to change the log output formatting.
 

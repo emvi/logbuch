@@ -4,7 +4,7 @@
 
 # Logbuch
 
-[![GoDoc](https://godoc.org/github.com/emvi/logbuch?status.svg)](https://godoc.org/github.com/emvi/logbuch)
+[![Go Reference](https://pkg.go.dev/badge/github.com/emvi/logbuch?status.svg)](https://pkg.go.dev/github.com/emvi/logbuch?status)
 [![CircleCI](https://circleci.com/gh/emvi/logbuch.svg?style=svg)](https://circleci.com/gh/emvi/logbuch)
 [![Go Report Card](https://goreportcard.com/badge/github.com/emvi/logbuch)](https://goreportcard.com/report/github.com/emvi/logbuch)
 <a href="https://discord.gg/fAYm4Cz"><img src="https://img.shields.io/discord/739184135649886288?logo=discord" alt="Chat on Discord"></a>

@@ -2,7 +2,6 @@ package logbuch
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -68,7 +67,7 @@ func TestRollingFileAppender_Write(t *testing.T) {
 		t.Fatalf("Appender must be closed, but was: %v", err)
 	}
 
-	dir, err := ioutil.ReadDir("out")
+	dir, err := os.ReadDir("out")
 
 	if err != nil {
 		t.Fatal(err)
@@ -102,7 +101,7 @@ func TestRollingFileAppender_Flush(t *testing.T) {
 		t.Fatalf("Log output must have been written, but was: %v", err)
 	}
 
-	content, err := ioutil.ReadFile("out/1_log.txt")
+	content, err := os.ReadFile("out/1_log.txt")
 
 	if err != nil {
 		t.Fatal(err)
@@ -116,7 +115,7 @@ func TestRollingFileAppender_Flush(t *testing.T) {
 		t.Fatalf("Log must have been flushed, but was: %v", err)
 	}
 
-	content, err = ioutil.ReadFile("out/1_log.txt")
+	content, err = os.ReadFile("out/1_log.txt")
 
 	if err != nil {
 		t.Fatal(err)
@@ -150,7 +149,7 @@ func TestRollingFileAppender_Close(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	content, err := ioutil.ReadFile("out/1_log.txt")
+	content, err := os.ReadFile("out/1_log.txt")
 
 	if err != nil {
 		t.Fatal(err)

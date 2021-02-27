@@ -2,7 +2,6 @@ package logbuch
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -125,7 +124,7 @@ func TestNewLoggerRollingFileAppender(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	stdFile, err := ioutil.ReadFile("out/1_log.std.txt")
+	stdFile, err := os.ReadFile("out/1_log.std.txt")
 
 	if err != nil {
 		t.Fatal(err)
@@ -135,7 +134,7 @@ func TestNewLoggerRollingFileAppender(t *testing.T) {
 		t.Fatalf("Info log must contain log output, but was: %v", string(stdFile))
 	}
 
-	errFile, err := ioutil.ReadFile("out/1_log.err.txt")
+	errFile, err := os.ReadFile("out/1_log.err.txt")
 
 	if err != nil {
 		t.Fatal(err)

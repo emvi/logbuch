@@ -1,7 +1,3 @@
-<p align="center">
-    <img src="logbuchgopher.svg" width="300px" />
-</p>
-
 # Logbuch
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/emvi/logbuch?status.svg)](https://pkg.go.dev/github.com/emvi/logbuch?status)
@@ -141,3 +137,7 @@ Note that you must close the rolling file appenders.
 ## License
 
 MIT
+
+<p align="center">
+    <img src="logbuchgopher.svg" width="300px" />
+</p>
